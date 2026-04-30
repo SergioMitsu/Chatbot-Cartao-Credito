@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Cartão de Crédito</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="chatbot-container">
+        <header class="chatbot-header">
+            <div class="header-content">
+                <div class="bot-info">
+                    <div class="bot-avatar">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                            <circle cx="20" cy="20" r="20" fill="#4F46E5"/>
+                            <path d="M20 10C15 10 11 14 11 19C11 24 15 28 20 28C25 28 29 24 29 19C29 14 25 10 20 10Z" fill="white"/>
+                            <circle cx="16" cy="17" r="2" fill="#4F46E5"/>
+                            <path d="M16 22C16 22 18 24 20 24C22 24 24 22 24 22" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="bot-details">
+                        <h1>Assistente de Cartão</h1>
+                        <span class="status-indicator online">Online</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-logout" onclick="location.href='/logout'">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M7 3H13C14.1046 3 15 3.89543 15 5V15C15 16.1046 14.1046 17 13 17H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M10 7L7 10L10 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M7 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Sair
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="chatbot-main">
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        <div class="message-avatar">
+                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+                                <circle cx="15" cy="15" r="15" fill="#4F46E5"/>
+                                <path d="M15 7.5C11.25 7.5 8.25 10.5 8.25 14.25C8.25 18 11.25 21 15 21C18.75 21 21.75 18 21.75 14.25C21.75 10.5 18.75 7.5 15 7.5Z" fill="white"/>
+                                <circle cx="12" cy="12.75" r="1.5" fill="#4F46E5"/>
+                                <circle cx="18" cy="12.75" r="1.5" fill="#4F46E5"/>
+                                <path d="M12 16.5C12 16.5 13.5 18 15 18C16.5 18 18 16.5 18 16.5" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="message-content">
+                            <p>Olá! Sou seu assistente de cartão de crédito. Como posso ajudar você hoje?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <form class="chat-input-form" id="chatForm">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                id="messageInput" 
+                                placeholder="Digite sua mensagem..." 
+                                autocomplete="off"
+                                required
+                            >
+                            <button type="submit" class="btn-send">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M18 10L2 2V18L18 10Z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <aside class="chat-sidebar">
+                <div class="sidebar-section">
+                    <h3>Atalhos Rápidos</h3>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="sendQuickMessage('Qual é o valor da minha fatura?')">
+                            📄 Ver Fatura
+                        </button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('Quero ver meu extrato')">
+                            📊 Ver Extrato
+                        </button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('meu limite')">
+                            💳 Meu Limite
+                        </button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('meu cartão')">
+                            📋 Meus Dados
+                        </button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('minha fatura')">
+                            💰 Minha Fatura
+                        </button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('quando vence')">
+                            📅 Vencimento
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Informações</h3>
+                    <div class="info-item">
+                        <span class="info-label">Status:</span>
+                        <span class="info-value online">Disponível</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Tempo de resposta:</span>
+                        <span class="info-value">Imediato</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+                
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+                    
+                    const data = await response.json();
+                    addMessage(data.response, 'bot');
+                } catch (error) {
+                    addMessage('Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.', 'bot');
+                }
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            if (sender === 'bot') {
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+                            <circle cx="15" cy="15" r="15" fill="#4F46E5"/>
+                            <path d="M15 7.5C11.25 7.5 8.25 10.5 8.25 14.25C8.25 18 11.25 21 15 21C18.75 21 21.75 18 21.75 14.25C21.75 10.5 18.75 7.5 15 7.5Z" fill="white"/>
+                            <circle cx="12" cy="12.75" r="1.5" fill="#4F46E5"/>
+                            <circle cx="18" cy="12.75" r="1.5" fill="#4F46E5"/>
+                            <path d="M12 16.5C12 16.5 13.5 18 15 18C16.5 18 18 16.5 18 16.5" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <p>${text}</p>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <p>${text}</p>
+                    </div>
+                `;
+            }
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('messageInput').value = message;
+            sendMessage();
+        }
+
+        document.getElementById('chatForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            sendMessage();
+        });
+
+        // Focus on input when page loads
+        window.addEventListener('load', function() {
+            document.getElementById('messageInput').focus();
+        });
+    </script>
+</body>
+</html>

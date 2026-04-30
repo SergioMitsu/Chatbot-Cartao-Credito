@@ -1,0 +1,12 @@
+# Banco de dados
+chatbot.db
+*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/

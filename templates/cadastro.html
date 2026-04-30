@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Assistente de Cartão</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Cadastro</h1>
+                <p>Crie sua conta para acessar o assistente de cartão de crédito</p>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <form action="/cadastrar" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
+                </div>
+
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="seu.email@exemplo.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha" required placeholder="Crie uma senha forte">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmar_senha">Confirmar Senha</label>
+                    <input type="password" id="confirmar_senha" name="confirmar_senha" required placeholder="Confirme sua senha">
+                </div>
+
+                <div class="form-section-divider">
+                    <h3>Dados do Cartão de Crédito</h3>
+                </div>
+
+                <div class="form-group">
+                    <label for="numero_cartao">Número do Cartão</label>
+                    <input type="text" id="numero_cartao" name="numero_cartao" placeholder="0000 0000 0000 0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="limite_cartao">Limite do Cartão</label>
+                    <input type="text" id="limite_cartao" name="limite_cartao" placeholder="R$ 5.000,00">
+                </div>
+
+                <div class="form-group">
+                    <label for="valor_fatura">Valor da Fatura Atual</label>
+                    <input type="text" id="valor_fatura" name="valor_fatura" placeholder="R$ 0,00">
+                </div>
+
+                <div class="form-group">
+                    <label for="vencimento_fatura">Vencimento da Fatura</label>
+                    <input type="text" id="vencimento_fatura" name="vencimento_fatura" placeholder="DD/MM">
+                </div>
+
+                <div class="form-group">
+                    <label for="status_fatura">Status da Fatura</label>
+                    <select id="status_fatura" name="status_fatura">
+                        <option value="">Selecione...</option>
+                        <option value="Aberta">Aberta</option>
+                        <option value="Fechada">Fechada</option>
+                        <option value="Paga">Paga</option>
+                        <option value="Atrasada">Atrasada</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">Cadastrar</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Já tem uma conta? <a href="/login">Faça login</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
