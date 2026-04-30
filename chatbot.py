@@ -451,6 +451,9 @@ def cadastrar_cliente():
 # ========================================
 # BLOCO: INICIALIZAÇÃO DO SERVIDOR
 # ========================================
+with app.app_context():
+    init_db()
+    
 if __name__ == "__main__":
     """
     Ponto de entrada principal da aplicação
